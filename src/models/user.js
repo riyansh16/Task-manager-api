@@ -2,7 +2,7 @@ const mongoose = require('mongoose')
 const validator = require('validator')
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
-const Task = require('./task')
+const Blog = require('./blog')
 
 const userSchema = new mongoose.Schema({
     name: {
@@ -33,30 +33,17 @@ const userSchema = new mongoose.Schema({
             }
         }
     },
-    age: {
-        type: Number,
-        default: 0,
-        validate(value) {
-            if (value < 0) {
-                throw new Error('Age must be a postive number')
-            }
-        }
-    },
     tokens: [{
         token: {
             type: String,
             required: true
         }
     }],
-    avatar: {
-        type: Buffer
-    }
-}, {
-    timestamps: true
+
 })
 
-userSchema.virtual('tasks', {
-    ref: 'Task',
+userSchema.virtual('blogs', {
+    ref: 'Blog',
     localField: '_id',
     foreignField: 'owner'
 })
@@ -67,8 +54,6 @@ userSchema.methods.toJSON = function () {
 
     delete userObject.password
     delete userObject.tokens
-    delete userObject.avatar
-
     return userObject
 }
 
